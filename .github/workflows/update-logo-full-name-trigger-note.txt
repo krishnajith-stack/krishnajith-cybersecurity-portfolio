@@ -1,0 +1,1 @@
+This file triggers the navbar logo full-name update workflow.
