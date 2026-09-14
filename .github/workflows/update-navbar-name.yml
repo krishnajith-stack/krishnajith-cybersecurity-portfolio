@@ -1,0 +1,40 @@
+name: Update navbar full name
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-navbar-name.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-navbar-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update navbar name and alignment
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old_anchor = '<a class="logo" href="#top">KJ<b>.</b>CYBER</a>'
+          new_anchor = '<a class="logo" href="#top">Krishnajith Pattiampully Uthaman</a>'
+          if old_anchor not in s:
+              raise SystemExit('Navbar logo text not found')
+          s = s.replace(old_anchor, new_anchor, 1)
+          old_css = '.logo{font-weight:900}'
+          new_css = '.logo{font-weight:900;font-size:.88rem;letter-spacing:.02em;white-space:nowrap}'
+          if old_css in s:
+              s = s.replace(old_css, new_css, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Use full name in portfolio navbar"
+          git push
