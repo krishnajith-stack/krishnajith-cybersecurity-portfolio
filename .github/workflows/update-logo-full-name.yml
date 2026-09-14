@@ -1,0 +1,45 @@
+name: Update logo to full name
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-logo-full-name.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Update navbar logo only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<a class="logo" href="#top">KRISHNAJITH</a>'
+          new = '<a class="logo" href="#top">Krishnajith Pattiampully Uthaman</a>'
+          if new in s:
+              print('Logo already updated')
+          else:
+              if old not in s:
+                  raise SystemExit('Expected navbar logo text not found')
+              s = s.replace(old, new, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No index change needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Use full name in portfolio logo"
+          git push origin main
