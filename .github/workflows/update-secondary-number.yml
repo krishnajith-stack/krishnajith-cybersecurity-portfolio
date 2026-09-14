@@ -1,4 +1,4 @@
-name: Update secondary contact label
+name: Update contact labels
 
 on:
   push:
@@ -10,26 +10,33 @@ permissions:
   contents: write
 
 jobs:
-  update-label:
+  update-labels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Replace India label with Secondary
+      - name: Refresh contact labels
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          old = 'India: +91 99618 89495'
-          new = 'Secondary: +91 99618 89495'
-          if old not in s:
-              raise SystemExit('Expected contact label not found')
-          p.write_text(s.replace(old, new), encoding='utf-8')
+          replacements = {
+              'WhatsApp: +971 52 125 9119': 'Connect with me: +971 52 125 9119',
+              'Secondary: +91 99618 89495': 'Alternate Mobile: +91 99618 89495',
+          }
+          changed = False
+          for old, new in replacements.items():
+              if old in s:
+                  s = s.replace(old, new)
+                  changed = True
+          if not changed:
+              raise SystemExit('Expected contact labels not found')
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Commit change
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Present India contact as secondary number'
+          git commit -m 'Refresh contact labels'
           git push
