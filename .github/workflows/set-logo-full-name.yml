@@ -1,0 +1,46 @@
+name: Set logo full name
+
+on:
+  push:
+    paths:
+      - '.github/workflows/set-logo-full-name.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set navbar logo to full name
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          full = '<a class="logo" href="#top">Krishnajith Pattiampully Uthaman</a>'
+          if full not in s:
+              candidates = [
+                  '<a class="logo" href="#top">Krishnajith</a>',
+                  '<a class="logo" href="#top">KRISHNAJITH</a>'
+              ]
+              for old in candidates:
+                  if old in s:
+                      s = s.replace(old, full, 1)
+                      break
+              else:
+                  raise SystemExit('Navbar logo text not found')
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Use full name in portfolio logo"
+          git push origin main
