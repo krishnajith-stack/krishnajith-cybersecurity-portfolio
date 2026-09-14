@@ -1,0 +1,19 @@
+{
+  "id": "INC-2026-002",
+  "title": "Multiple failed logins followed by success",
+  "description": "Potential brute force activity against a privileged cloud identity.",
+  "timestamp": "2026-09-14T10:15:20Z",
+  "source": "Microsoft Entra ID",
+  "severity": "medium",
+  "user": "cloud.admin@contoso.example",
+  "src_ip": "192.0.2.44",
+  "authentication_result": "failure",
+  "event_count": 37,
+  "asset_criticality": "critical",
+  "privileged_account": true,
+  "iocs": {
+    "ips": ["192.0.2.44"],
+    "domains": [],
+    "hashes": []
+  }
+}
