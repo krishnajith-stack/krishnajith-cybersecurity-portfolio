@@ -1,0 +1,37 @@
+name: Revert name to Krishnajith
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  revert-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Use Krishnajith only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<a class="logo" href="#top">Krishnajith Pattiampully Uthaman</a>', '<a class="logo" href="#top">Krishnajith</a>')
+          s = s.replace('<h1>Krishnajith Pattiampully Uthaman<span>', '<h1>Krishnajith<span>')
+          s = s.replace('.logo{font-weight:900;font-size:.88rem;letter-spacing:.02em;white-space:nowrap}', '.logo{font-weight:900}')
+          s = s.replace('h1{font-size:clamp(2.45rem,5.6vw,4.9rem);line-height:.98;letter-spacing:-.045em;margin:18px 0}', 'h1{font-size:clamp(3rem,7vw,6rem);line-height:.94;letter-spacing:-.055em;margin:18px 0}')
+          s = s.replace('@media(max-width:650px){.hero{padding:58px 0 40px}h1{font-size:clamp(2.05rem,10.5vw,3.1rem)}', '@media(max-width:650px){.hero{padding:58px 0 40px}h1{font-size:clamp(2.5rem,14vw,4rem)}')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Use Krishnajith only in portfolio header"
+          git push
