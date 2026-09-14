@@ -1,0 +1,50 @@
+name: Rearrange equal project grid
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rearrange-project-grid.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-project-grid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make six project cards equal and reorder
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_css = '.project-grid,.impact,.matrix{display:grid;grid-template-columns:1fr 1fr;gap:15px}'
+          new_css = '.project-grid,.impact,.matrix{display:grid;grid-template-columns:1fr 1fr;gap:15px}.project-grid{grid-auto-rows:1fr}.project{display:flex;flex-direction:column;height:100%}.project .project-actions{margin-top:auto;padding-top:17px}'
+          if old_css in s and '.project-grid{grid-auto-rows:1fr}' not in s:
+              s = s.replace(old_css, new_css, 1)
+
+          start_marker = '<div class="project-grid">'
+          end_marker = '</div></div></section><section id="impact">'
+          start = s.find(start_marker, s.find('<section id="projects">'))
+          end = s.find(end_marker, start)
+          if start == -1 or end == -1:
+              raise SystemExit('Project grid markers not found')
+
+          cards = '''<div class="project-grid"><article class="project"><div class="project-top"><div class="type">SOC Automation</div><div class="project-status">Live Hands-on Project</div></div><h3>SOC L1 Alert Triage Automation</h3><p>Python-based workflow that validates and enriches alerts, scores risk, maps supported behavior to MITRE ATT&amp;CK and produces analyst-ready evidence for closure, investigation or escalation.</p><div class="pills"><span class="pill">Python</span><span class="pill">SIEM / EDR</span><span class="pill">IOC Enrichment</span><span class="pill">MITRE ATT&amp;CK</span><span class="pill">GitHub Actions</span></div><div class="project-actions"><a href="soc-l1-alert-triage-automation/" target="_blank">↗ Live Demo</a><a href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/soc-l1-alert-triage-automation" target="_blank">↗ Source &amp; Evidence</a></div></article><article class="project"><div class="project-top"><div class="type">SIEM &amp; Detection</div><div class="project-status">Hands-on Lab</div></div><h3>Microsoft Sentinel Home SOC Lab</h3><p>Azure monitoring lab for telemetry onboarding, KQL investigation, analytics-rule concepts, incidents, entities and threat hunting.</p><div class="pills"><span class="pill">Sentinel</span><span class="pill">Log Analytics</span><span class="pill">KQL</span><span class="pill">AMA / DCR</span></div><div class="project-actions"><a href="projects/sentinel-soc-lab.html">↗ View Lab</a></div></article><article class="project"><div class="project-top"><div class="type">Identity Security &amp; Detection</div><div class="project-status">Portfolio Lab Project</div></div><h3>Microsoft Entra ID Attack Detection &amp; Response</h3><p>Identity-security lab covering password spraying, failed sign-in patterns, risky access, privileged activity and MFA anomalies using Entra ID telemetry, Microsoft Sentinel and KQL.</p><div class="pills"><span class="pill">Entra ID</span><span class="pill">Sentinel</span><span class="pill">KQL</span><span class="pill">Conditional Access</span><span class="pill">MITRE ATT&amp;CK</span></div><div class="project-actions"><a href="projects/entra-identity-detection-response.html">↗ View Lab</a></div></article><article class="project"><div class="project-top"><div class="type">Vulnerability Management</div><div class="project-status">Enterprise Case Study</div></div><h3>Enterprise VM Governance Model</h3><p>Risk-based workflow covering prioritization, remediation ownership, SLA governance, exception handling, validation and management reporting.</p><div class="pills"><span class="pill">Qualys VMDR</span><span class="pill">ServiceNow VR</span><span class="pill">Rapid7</span><span class="pill">Tenable</span><span class="pill">Nozomi</span></div><div class="project-actions"><a href="projects/vm-governance.html">↗ View Case Study</a></div></article><article class="project"><div class="project-top"><div class="type">GRC &amp; Governance</div><div class="project-status">Professional Case Study</div></div><h3>Enterprise Cybersecurity Governance Framework — AIMG</h3><p>Fictional industrial-enterprise case study connecting business impact, IT/OT risk, ownership, control design and management reporting.</p><div class="pills"><span class="pill">ISO 27001:2022</span><span class="pill">NIST CSF</span><span class="pill">IT / OT</span><span class="pill">RACI</span></div><div class="project-actions"><a href="enterprise-cybersecurity-governance-framework/" target="_blank" rel="noopener">↗ View Live Case Study</a><a href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/enterprise-cybersecurity-governance-framework" target="_blank" rel="noopener">↗ Evidence</a></div></article><article class="project"><div class="project-top"><div class="type">Identity Security</div><div class="project-status">Architecture Case Study</div></div><h3>Zero Trust Identity Security Baseline</h3><p>Entra ID security baseline built around MFA, Conditional Access, RBAC, PIM, identity risk and least privilege.</p><div class="pills"><span class="pill">Entra ID</span><span class="pill">Conditional Access</span><span class="pill">MFA</span><span class="pill">PIM</span></div><div class="project-actions"><a href="projects/zero-trust-identity.html">↗ View Architecture</a></div></article>'''
+
+          s = s[:start] + cards + s[end:]
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit layout update
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Rearrange six equal-size cybersecurity project cards'
+          git push
