@@ -1,0 +1,41 @@
+name: Add Entra identity project card
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-entra-project.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  add-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Insert Entra ID project card
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          if 'entra-identity-detection-response.html' in s:
+              print('Project card already present')
+              raise SystemExit(0)
+          anchor = '<div class="project-actions"><a href="projects/zero-trust-identity.html">↗ View Architecture</a></div></article></div></div></section><section id="impact">'
+          card = '''<div class="project-actions"><a href="projects/zero-trust-identity.html">↗ View Architecture</a></div></article><article class="project"><div class="project-top"><div class="type">Identity Security &amp; Detection</div><div class="project-status">Portfolio Lab Project</div></div><h3>Microsoft Entra ID Attack Detection &amp; Response</h3><p>Identity-security lab covering password spraying, failed sign-in patterns, risky access, privileged activity and MFA anomalies using Entra ID telemetry, Microsoft Sentinel and KQL.</p><div class="pills"><span class="pill">Entra ID</span><span class="pill">Sentinel</span><span class="pill">KQL</span><span class="pill">Conditional Access</span><span class="pill">MITRE ATT&amp;CK</span></div><div class="project-actions"><a href="projects/entra-identity-detection-response.html">↗ View Lab</a></div></article></div></div></section><section id="impact">'''
+          if anchor not in s:
+              raise SystemExit('Project insertion anchor not found')
+          p.write_text(s.replace(anchor, card, 1), encoding='utf-8')
+          PY
+      - name: Commit project card
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add Entra ID attack detection and response project'
+          git push
