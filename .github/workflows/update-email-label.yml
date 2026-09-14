@@ -1,0 +1,44 @@
+name: Update email label
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update email label
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<a href="mailto:pattiampullykrishnajith@gmail.com">pattiampullykrishnajith@gmail.com</a>'
+          new = '<a href="mailto:pattiampullykrishnajith@gmail.com">Email: pattiampullykrishnajith@gmail.com</a>'
+          if new in s:
+              print('Already updated')
+          elif old in s:
+              p.write_text(s.replace(old, new, 1), encoding='utf-8')
+              print('Updated email label')
+          else:
+              raise SystemExit('Expected email anchor not found')
+          PY
+      - name: Commit change
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add Email label to portfolio contact"
+          git push
