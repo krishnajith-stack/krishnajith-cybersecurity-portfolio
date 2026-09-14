@@ -1,0 +1,41 @@
+name: Add CISM in progress
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-cism-in-progress.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-portfolio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add CISM to professional development
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          if 'CISM — In Progress' in s or 'CISM &mdash; In Progress' in s:
+              print('CISM card already present')
+              raise SystemExit(0)
+          anchor = '<div class="cert"><div class="badge">MICROSOFT + LINKEDIN</div><h3>AI Leadership</h3><p>AI for Organizational Leaders</p></div></div><div class="edu">'
+          replacement = '<div class="cert"><div class="badge">MICROSOFT + LINKEDIN</div><h3>AI Leadership</h3><p>AI for Organizational Leaders</p></div><div class="cert"><div class="badge">ISACA</div><h3>CISM — In Progress</h3><p>Governance • Risk Management • Information Security Program • Incident Management</p></div></div><div class="edu">'
+          if anchor not in s:
+              raise SystemExit('Professional Development insertion anchor not found')
+          p.write_text(s.replace(anchor, replacement, 1), encoding='utf-8')
+          PY
+      - name: Commit portfolio update
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add CISM in progress to professional development'
+          git push
