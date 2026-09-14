@@ -1,0 +1,44 @@
+name: Update hero full name
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-hero-full-name.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-hero-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update hero name and responsive sizing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old_name = '<h1>KRISHNAJITH<span>'
+          new_name = '<h1>Krishnajith Pattiampully Uthaman<span>'
+          if old_name not in s:
+              raise SystemExit('Hero name target not found')
+          s = s.replace(old_name, new_name, 1)
+          old_h1 = 'h1{font-size:clamp(3rem,7vw,6rem);line-height:.94;letter-spacing:-.055em;margin:18px 0}'
+          new_h1 = 'h1{font-size:clamp(2.45rem,5.6vw,4.9rem);line-height:.98;letter-spacing:-.045em;margin:18px 0}'
+          if old_h1 in s:
+              s = s.replace(old_h1, new_h1, 1)
+          old_mobile = 'h1{font-size:clamp(2.5rem,14vw,4rem)}'
+          new_mobile = 'h1{font-size:clamp(2.05rem,10.5vw,3.1rem)}'
+          if old_mobile in s:
+              s = s.replace(old_mobile, new_mobile, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Use full name in portfolio hero' || exit 0
+          git push
