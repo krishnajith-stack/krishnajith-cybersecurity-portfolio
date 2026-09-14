@@ -1,0 +1,36 @@
+name: Update profile positioning
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Enterprise IT wording
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          old = 'Azure Security • Security Operations • Enterprise IT</small>'
+          new = 'Azure Security • Security Operations • Enterprise IT Manager</small>'
+          if old in text:
+              p.write_text(text.replace(old, new), encoding='utf-8')
+      - name: Commit change if needed
+        run: |
+          if git diff --quiet; then
+            echo "No change needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Update profile positioning to Enterprise IT Manager"
+          git push
