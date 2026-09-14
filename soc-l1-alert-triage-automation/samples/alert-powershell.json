@@ -1,0 +1,21 @@
+{
+  "id": "INC-2026-001",
+  "title": "Encoded PowerShell execution from suspicious source",
+  "description": "Endpoint telemetry detected PowerShell with encoded command content.",
+  "timestamp": "2026-09-14T08:42:11Z",
+  "source": "Microsoft Defender for Endpoint",
+  "severity": "high",
+  "user": "aisha.khan@contoso.example",
+  "host": "FIN-WS-042",
+  "src_ip": "203.0.113.66",
+  "process": "powershell.exe",
+  "command_line": "powershell.exe -EncodedCommand SQBFAFgAIAAoACcAdABlAHMAdAAnACkA",
+  "asset_criticality": "important",
+  "privileged_account": false,
+  "event_count": 1,
+  "iocs": {
+    "ips": ["203.0.113.66"],
+    "domains": [],
+    "hashes": []
+  }
+}

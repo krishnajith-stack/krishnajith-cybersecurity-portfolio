@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "alert_id": "INC-2026-001",
+  "title": "Encoded PowerShell execution from suspicious source",
+  "triaged_at": "2026-09-14T22:14:26.768705+00:00",
+  "risk_score": 100,
+  "priority": "P1",
+  "disposition": "ESCALATE_TO_L2",
+  "confidence": "HIGH",
+  "summary": "Encoded PowerShell execution from suspicious source scored 100/100 and was routed to ESCALATE_TO_L2. Primary drivers: Source severity, Malicious IP match, Obfuscated PowerShell.",
+  "findings": [
+    {
+      "label": "Source severity",
+      "points": 40,
+      "evidence": "Normalized severity is high."
+    },
+    {
+      "label": "Asset criticality",
+      "points": 10,
+      "evidence": "Asset is classified as important."
+    },
+    {
+      "label": "Malicious IP match",
+      "points": 30,
+      "evidence": "203.0.113.66 matches the local malicious indicator list."
+    },
+    {
+      "label": "Obfuscated PowerShell",
+      "points": 25,
+      "evidence": "Command line contains encoded or in-memory execution indicators."
+    }
+  ],
+  "entities": {
+    "users": [
+      "aisha.khan@contoso.example"
+    ],
+    "hosts": [
+      "FIN-WS-042"
+    ],
+    "ips": [
+      "203.0.113.66"
+    ]
+  },
+  "mitre_attack": [
+    {
+      "technique_id": "T1059.001",
+      "name": "PowerShell"
+    }
+  ],
+  "tags": [
+    "malicious-ioc",
+    "obfuscated-command",
+    "powershell"
+  ],
+  "recommended_actions": [
+    "Validate the alert time range and source telemetry.",
+    "Search the matched indicator across SIEM, EDR, DNS, proxy, and firewall telemetry.",
+    "Review the process tree, command line, parent process, and endpoint timeline.",
+    "Record findings and evidence in the incident ticket.",
+    "Escalate with the generated evidence package.",
+    "L2 to determine containment after validating business impact."
+  ],
+  "analyst_note": "Automation provides decision support; a human analyst owns containment and closure."
+}

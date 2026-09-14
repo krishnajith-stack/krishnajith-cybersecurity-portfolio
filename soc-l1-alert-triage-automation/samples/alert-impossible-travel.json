@@ -1,0 +1,15 @@
+{
+  "id": "INC-2026-003",
+  "title": "Impossible travel sign-in",
+  "description": "Successful sign-ins appeared from India and Germany within 24 minutes.",
+  "timestamp": "2026-09-14T12:05:44Z",
+  "source": "Microsoft Entra ID Protection",
+  "severity": "medium",
+  "user": "samir.rao@contoso.example",
+  "src_ip": "8.8.8.8",
+  "authentication_result": "success",
+  "event_count": 2,
+  "asset_criticality": "important",
+  "privileged_account": false,
+  "iocs": {"ips": [], "domains": [], "hashes": []}
+}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive SOC L1 alert triage automation portfolio project by Krishnajith P U.">
+  <meta property="og:title" content="SOC L1 Alert Triage Automation">
+  <meta property="og:description" content="Run four synthetic alerts through explainable enrichment, risk scoring, MITRE mapping, and escalation logic.">
+  <meta property="og:type" content="website">
+  <title>SOC L1 Alert Triage Automation · Krishnajith P U</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#demo">Skip to interactive demo</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="SOC triage project home">
+      <span class="brand-mark">KJ</span>
+      <span>Security Engineering Lab</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#workflow">Workflow</a>
+      <a href="#demo">Live demo</a>
+      <a href="#evidence">Evidence</a>
+    </nav>
+    <a class="button ghost small" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/soc-l1-alert-triage-automation" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="eyebrow"><span class="pulse"></span> Hands-on portfolio lab · v1.0</div>
+      <h1>Alert triage that explains <span>why</span> it escalates.</h1>
+      <p class="hero-copy">A vendor-neutral SOC L1 workflow for alert validation, IOC enrichment, risk scoring, MITRE ATT&amp;CK mapping, evidence capture, and controlled L2 escalation.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#demo">Run the demo</a>
+        <a class="button ghost" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/soc-l1-alert-triage-automation" target="_blank" rel="noopener noreferrer">Review source code</a>
+      </div>
+      <div class="metric-grid" aria-label="Project metrics">
+        <article><strong>4</strong><span>Threat scenarios</span></article>
+        <article><strong>0–100</strong><span>Explainable risk score</span></article>
+        <article><strong>5/5</strong><span>Automated tests</span></article>
+        <article><strong>0</strong><span>Paid services required</span></article>
+      </div>
+    </section>
+
+    <section class="section shell" id="workflow">
+      <div class="section-heading">
+        <p class="kicker">Decision pipeline</p>
+        <h2>From raw signal to analyst-ready case</h2>
+        <p>The workflow automates repeatable investigation steps while keeping containment and closure under human control.</p>
+      </div>
+      <div class="pipeline" aria-label="Triage workflow">
+        <div class="stage"><span>01</span><strong>Validate</strong><small>Required fields</small></div>
+        <div class="connector" aria-hidden="true">→</div>
+        <div class="stage"><span>02</span><strong>Enrich</strong><small>IOC + entity context</small></div>
+        <div class="connector" aria-hidden="true">→</div>
+        <div class="stage"><span>03</span><strong>Score</strong><small>Visible weights</small></div>
+        <div class="connector" aria-hidden="true">→</div>
+        <div class="stage"><span>04</span><strong>Map</strong><small>MITRE ATT&amp;CK</small></div>
+        <div class="connector" aria-hidden="true">→</div>
+        <div class="stage"><span>05</span><strong>Route</strong><small>L1 / L2 decision</small></div>
+      </div>
+    </section>
+
+    <section class="section demo-wrap" id="demo">
+      <div class="shell">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="kicker">Interactive demo</p>
+            <h2>Run a synthetic security alert</h2>
+          </div>
+          <p>Select a scenario, inspect the normalized alert, then run the deterministic decision engine. No data leaves your browser.</p>
+        </div>
+
+        <div class="scenario-tabs" role="tablist" aria-label="Alert scenarios">
+          <button role="tab" aria-selected="true" data-scenario="powershell">Encoded PowerShell</button>
+          <button role="tab" aria-selected="false" data-scenario="bruteforce">Privileged brute force</button>
+          <button role="tab" aria-selected="false" data-scenario="travel">Impossible travel</button>
+          <button role="tab" aria-selected="false" data-scenario="benign">Approved scanner</button>
+        </div>
+
+        <div class="demo-grid">
+          <article class="panel alert-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-label">Normalized alert</span>
+                <h3 id="alert-title">Encoded PowerShell execution</h3>
+              </div>
+              <span class="severity" id="alert-severity">HIGH</span>
+            </div>
+            <dl class="alert-details" id="alert-details"></dl>
+            <details>
+              <summary>View alert JSON</summary>
+              <pre><code id="alert-json"></code></pre>
+            </details>
+            <button class="button primary run-button" id="run-triage" type="button">Run automated triage</button>
+          </article>
+
+          <article class="panel result-panel" id="result-panel" aria-live="polite">
+            <div class="empty-state" id="empty-state">
+              <div class="radar" aria-hidden="true"><span></span></div>
+              <h3>Ready for analysis</h3>
+              <p>Run the workflow to generate a risk score, decision, ATT&amp;CK mapping, and recommended analyst actions.</p>
+            </div>
+            <div class="result-content" id="result-content" hidden>
+              <div class="decision-row">
+                <div class="score-ring" id="score-ring"><strong id="risk-score">0</strong><span>/100</span></div>
+                <div>
+                  <span class="panel-label">Automated recommendation</span>
+                  <h3 id="disposition"></h3>
+                  <div class="result-badges"><span id="priority"></span><span id="confidence"></span></div>
+                </div>
+              </div>
+              <p class="summary" id="result-summary"></p>
+              <div class="result-columns">
+                <div>
+                  <h4>Score evidence</h4>
+                  <ul class="evidence-list" id="score-evidence"></ul>
+                </div>
+                <div>
+                  <h4>MITRE ATT&amp;CK</h4>
+                  <div id="mitre-list" class="mitre-list"></div>
+                  <h4>Next actions</h4>
+                  <ol class="action-list" id="action-list"></ol>
+                </div>
+              </div>
+              <p class="human-check">Human checkpoint: validate evidence and business context before containment or closure.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="evidence">
+      <div class="section-heading">
+        <p class="kicker">Engineering evidence</p>
+        <h2>Built to be reviewed, tested, and extended</h2>
+      </div>
+      <div class="evidence-grid">
+        <article><span>01</span><h3>Transparent rules</h3><p>Each factor records its score, label, and evidence. Reviewers can challenge a decision instead of trusting an unexplained model.</p></article>
+        <article><span>02</span><h3>Automated validation</h3><p>Unit tests verify malicious, suspicious, identity-anomaly, false-positive, and malformed-alert outcomes on every push.</p></article>
+        <article><span>03</span><h3>Analyst-ready output</h3><p>The Python CLI produces JSON for integrations and Markdown for case notes, tickets, and L2 escalation packages.</p></article>
+        <article><span>04</span><h3>Production pathway</h3><p>The normalized schema can sit behind Sentinel automation rules and a Logic App without making the portfolio demo dependent on paid Azure services.</p></article>
+      </div>
+      <div class="cta-card">
+        <div><p class="kicker">Review the implementation</p><h2>Code, tests, samples, and design decisions are public.</h2></div>
+        <a class="button primary" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/soc-l1-alert-triage-automation" target="_blank" rel="noopener noreferrer">Open source on GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <div><strong>Krishnajith P U</strong><span>Cybersecurity &amp; Vulnerability Management Lead</span></div>
+      <div><a href="https://krishnajith-stack.github.io/krishnajith-cybersecurity-portfolio/">Portfolio</a><a href="https://github.com/krishnajith-stack">GitHub</a></div>
+    </div>
+  </footer>
+</body>
+</html>

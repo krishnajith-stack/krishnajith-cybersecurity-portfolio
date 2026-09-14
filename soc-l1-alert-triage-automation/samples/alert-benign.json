@@ -1,0 +1,15 @@
+{
+  "id": "INC-2026-004",
+  "title": "Approved vulnerability scanner connection",
+  "description": "Scheduled internal vulnerability scan generated repeated connection events.",
+  "timestamp": "2026-09-14T02:00:00Z",
+  "source": "Firewall",
+  "severity": "low",
+  "src_ip": "198.51.100.10",
+  "dst_ip": "10.20.30.40",
+  "event_count": 200,
+  "asset_criticality": "standard",
+  "privileged_account": false,
+  "known_benign": true,
+  "iocs": {"ips": [], "domains": [], "hashes": []}
+}
