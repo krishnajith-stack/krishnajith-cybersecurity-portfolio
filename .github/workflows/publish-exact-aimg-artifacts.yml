@@ -1,0 +1,35 @@
+name: Publish exact AIMG final artifacts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/final-aimg-source/PUBLISH'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct exact uploaded artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p enterprise-cybersecurity-governance-framework/downloads
+          cat .github/final-aimg-source/docx-*.b64 | base64 -d > enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx
+          cat .github/final-aimg-source/xlsx-*.b64 | base64 -d > enterprise-cybersecurity-governance-framework/downloads/AIMG_Business_Process_Criticality.xlsx
+          echo 'c6b7ede35dc1a9f36a17cbbe08b74274f3c14c546e9836aaafd9109b722325fc  enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx' | sha256sum -c -
+          echo 'be226c8ae7183f3a63f65a917b4c5687f86c8c0935dcd4f306a0eeb2e751f785  enterprise-cybersecurity-governance-framework/downloads/AIMG_Business_Process_Criticality.xlsx' | sha256sum -c -
+      - name: Commit exact artifacts
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx enterprise-cybersecurity-governance-framework/downloads/AIMG_Business_Process_Criticality.xlsx
+          git diff --cached --quiet && exit 0
+          git commit -m 'Publish exact final AIMG Word and Excel artifacts'
+          git push
