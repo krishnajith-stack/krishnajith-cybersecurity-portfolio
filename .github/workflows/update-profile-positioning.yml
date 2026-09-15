@@ -13,16 +13,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Update Enterprise IT wording
+      - name: Update portfolio positioning and AIMG project card
         shell: python
         run: |
           from pathlib import Path
           p = Path('index.html')
           text = p.read_text(encoding='utf-8')
-          old = 'Azure Security • Security Operations • Enterprise IT</small>'
-          new = 'Azure Security • Security Operations • Enterprise IT Manager</small>'
-          if old in text:
-              p.write_text(text.replace(old, new), encoding='utf-8')
+
+          text = text.replace(
+              'Azure Security • Security Operations • Enterprise IT</small>',
+              'Azure Security • Security Operations • Enterprise IT Manager</small>'
+          )
+
+          text = text.replace(
+              '<div class="type">GRC &amp; Governance</div><div class="project-status">Professional Case Study</div></div><h3>Enterprise Cybersecurity Governance Framework — AIMG</h3>',
+              '<div class="type">GRC &amp; Governance</div><div class="project-status">Published · Final v1.0</div></div><h3>Enterprise Cybersecurity Governance Framework — AIMG</h3>'
+          )
+
+          text = text.replace(
+              'Industrial-enterprise governance case study connecting business objectives, IT/OT risk, accountability, control design, policy structure and management reporting.',
+              'Published enterprise cybersecurity governance case study featuring an 87-page management framework and 5-sheet governance workbook covering business criticality, Crown Jewels, CIA, recovery requirements, risk ownership, RACI, Three Lines, KPI/KRI reporting, assurance and maturity.'
+          )
+
+          text = text.replace(
+              '<span class="pill">ISO 27001:2022</span><span class="pill">NIST CSF</span><span class="pill">IT / OT</span><span class="pill">RACI</span>',
+              '<span class="pill">Risk Governance</span><span class="pill">RACI</span><span class="pill">Three Lines</span><span class="pill">KPI / KRI</span><span class="pill">IT / OT</span>'
+          )
+
+          text = text.replace(
+              '↗ Evidence</a>',
+              '↗ GitHub Project</a>',
+              1
+          )
+
+          p.write_text(text, encoding='utf-8')
+
       - name: Commit change if needed
         run: |
           if git diff --quiet; then
@@ -32,5 +57,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Update profile positioning to Enterprise IT Manager"
+          git commit -m "Publish final AIMG project card on portfolio"
           git push
