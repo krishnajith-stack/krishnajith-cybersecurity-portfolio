@@ -1,25 +1,29 @@
 # Enterprise Cybersecurity Governance Framework
 
-Interactive professional portfolio case study for **Atlas Industrial Machinery Group (AIMG)**, a fictional multinational heavy-equipment manufacturer with a hybrid IT/OT environment.
+Published professional portfolio case study for **Atlas Industrial Machinery Group (AIMG)**, a fictional multinational heavy-equipment manufacturer with a hybrid IT/OT environment.
 
-## What this project demonstrates
+## Final project scope
 
 - Business-led cybersecurity governance and accountable ownership
 - Business-process criticality across eight enterprise processes
-- Impact assessment across financial, operational, customer, legal/regulatory, safety and reputation dimensions
+- Business impact assessment across financial, operational, customer, legal/regulatory, safety and reputation dimensions
 - Identification and governance of eight Crown Jewel assets
 - Confidentiality, integrity and availability (CIA) prioritization
-- Recovery tiers with portfolio RTO/RPO assumptions subject to formal BIA validation
+- Recovery tiers with portfolio RTO/RPO assumptions subject to formal Business Impact Analysis validation
 - Governance roles, decision authority, RACI and Three Lines accountability
 - Policy and control governance, risk treatment and risk acceptance
-- KPI/KRI/KGI management reporting and escalation
+- KPI/KRI/KGI management reporting, thresholds and escalation
 - Audit, assurance, compliance, maturity assessment and continuous improvement
 
-## Evidence included
+## Final artifact package
 
-- `evidence/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.pdf` — browser-ready final 87-page framework
-- `evidence/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx` — final editable source document, version 1.0
-- `evidence/AIMG_Business_Process_Criticality.xlsx` — five-sheet assessment workbook covering Business Process Criticality, Crown Jewels, CIA Assessment, Recovery Requirements and Governance RACI
+The completed project has been reviewed as a publication-ready portfolio case study and includes:
+
+- **87-page Enterprise Cybersecurity Governance Framework — Version 1.0 Final**
+- **Five-sheet Governance Assessment Workbook** covering Business Process Criticality, Crown Jewels, CIA Assessment, Recovery Requirements and Governance RACI
+- **Published recruiter-facing live case study** in this repository
+
+The downloadable binary publication files are retained separately as the verified final artifact package. This repository hosts the public case-study presentation and project source.
 
 ## View the project
 
@@ -28,7 +32,7 @@ Interactive professional portfolio case study for **Atlas Industrial Machinery G
 
 ## Project boundary
 
-AIMG is a fictional organization created for professional portfolio and learning purposes. The framework uses modeled organizational assumptions and does not represent a real employer or client environment. Recovery targets are portfolio assumptions and should be validated through formal Business Impact Analysis in a real implementation.
+AIMG is a fictional organization created for professional portfolio and learning purposes. The framework uses modeled organizational assumptions and does not represent a real employer or client environment. Recovery targets are portfolio assumptions and should be validated through formal Business Impact Analysis in a real implementation. The case study does not claim real organizational approval or sign-off.
 
 ## Run locally
 

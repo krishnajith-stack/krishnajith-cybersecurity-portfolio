@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Final enterprise cybersecurity governance case study for Atlas Industrial Machinery Group (AIMG), a fictional multinational manufacturer with hybrid IT and OT operations.">
+  <meta name="description" content="Published enterprise cybersecurity governance case study for Atlas Industrial Machinery Group (AIMG), a fictional multinational manufacturer with hybrid IT and OT operations.">
   <meta name="theme-color" content="#081612">
   <title>Enterprise Cybersecurity Governance Framework | AIMG</title>
   <link rel="stylesheet" href="styles.css">
@@ -16,10 +16,9 @@
       <span><strong>Governance Lab</strong><small>Krishnajith’s portfolio</small></span>
     </a>
     <nav aria-label="Project navigation">
-      <a href="#context">Context</a>
-      <a href="#criticality">Criticality</a>
-      <a href="#crown-jewels">Crown jewels</a>
-      <a href="#evidence">Evidence</a>
+      <a href="#scope">Scope</a>
+      <a href="#model">Model</a>
+      <a href="#deliverables">Deliverables</a>
     </nav>
     <a class="header-link" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/enterprise-cybersecurity-governance-framework" target="_blank" rel="noopener">GitHub ↗</a>
   </header>
@@ -27,12 +26,12 @@
   <main id="main">
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow"><span>Published professional portfolio case study</span><span>Version 1.0</span></div>
+        <div class="eyebrow"><span>Published professional portfolio case study</span><span>Version 1.0 · Final</span></div>
         <h1>Enterprise Cybersecurity <em>Governance Framework</em></h1>
-        <p class="lede">A business-led governance model connecting critical processes, accountable owners, enterprise risk, crown-jewel protection, recovery requirements, management reporting and assurance across a multinational hybrid IT/OT environment.</p>
+        <p class="lede">A business-led governance model connecting critical processes, accountable owners, enterprise risk, crown-jewel protection, resilience, management reporting and assurance across a multinational hybrid IT/OT environment.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#criticality">Explore the model <span aria-hidden="true">↓</span></a>
-          <a class="button secondary" href="evidence/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.pdf" target="_blank" rel="noopener">View final 87-page PDF ↗</a>
+          <a class="button primary" href="#model">Explore the governance model <span aria-hidden="true">↓</span></a>
+          <a class="button secondary" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/enterprise-cybersecurity-governance-framework" target="_blank" rel="noopener">View project source ↗</a>
         </div>
         <p class="disclosure"><strong>Scope note:</strong> Atlas Industrial Machinery Group (AIMG) is a fictional organization created for professional portfolio and learning purposes.</p>
       </div>
@@ -40,9 +39,9 @@
         <div class="panel-label">Governance decision chain</div>
         <ol class="decision-chain">
           <li><span>01</span><div><strong>Understand</strong><small>Business and technology context</small></div></li>
-          <li><span>02</span><div><strong>Prioritize</strong><small>Processes by business impact</small></div></li>
+          <li><span>02</span><div><strong>Prioritize</strong><small>Business processes and impact</small></div></li>
           <li><span>03</span><div><strong>Assign</strong><small>Business and risk accountability</small></div></li>
-          <li><span>04</span><div><strong>Protect</strong><small>Crown jewels by CIA and resilience need</small></div></li>
+          <li><span>04</span><div><strong>Govern</strong><small>Risk, controls, metrics and assurance</small></div></li>
         </ol>
       </aside>
     </section>
@@ -55,125 +54,68 @@
       <div><strong>24×7</strong><span>Security operations</span></div>
     </section>
 
-    <section class="section" id="context">
+    <section class="section" id="scope">
       <div class="section-heading">
-        <div><span class="section-index">01 / Business context</span><h2>Governance starts with operational reality.</h2></div>
-        <p>AIMG designs and manufactures heavy equipment across the USA, UAE, India, Europe and Asia. Its risk profile spans corporate technology, cloud platforms, enterprise applications, identity services and plant-floor systems.</p>
+        <div><span class="section-index">01 / Enterprise scope</span><h2>Cybersecurity governance anchored in business impact.</h2></div>
+        <p>The final framework covers corporate IT, Azure, Entra ID, enterprise applications, manufacturing OT/ICS, third-party dependencies and critical information assets.</p>
       </div>
       <div class="context-grid">
-        <article class="context-card featured">
-          <span class="card-kicker">Hybrid estate</span>
-          <h3>IT and OT are governed as one business-risk landscape.</h3>
-          <p>Production relies on MES, SCADA, ICS, PLCs, robotics, industrial networks and engineering workstations, while global operations depend on Azure, Entra ID, Microsoft 365, ERP, PLM, CRM and ServiceNow.</p>
-          <div class="tag-list"><span>15,000 IT assets</span><span>5,000 OT assets</span><span>3 data centers</span><span>~100 critical applications</span></div>
-        </article>
-        <article class="context-card">
-          <span class="card-kicker">Business dependency</span>
-          <h3>Technology supports safety, production and revenue.</h3>
-          <p>Cybersecurity decisions consider production continuity, customer delivery, intellectual property, regulatory duties, financial impact and operational safety—not technical severity alone.</p>
-        </article>
-        <article class="context-card">
-          <span class="card-kicker">Accountability</span>
-          <h3>Business ownership stays distinct from technical ownership.</h3>
-          <p>Security and technology teams assess, advise and implement controls. Business and Risk Owners retain accountability for business-risk decisions within delegated authority.</p>
-        </article>
+        <article class="context-card featured"><span class="card-kicker">Business criticality</span><h3>Eight enterprise processes assessed.</h3><p>Manufacturing, Finance, Supply Chain, Product Engineering, Sales, Email & Collaboration, IT Service Management and Human Resources are classified according to operational, financial, customer, regulatory, safety and reputation impact.</p></article>
+        <article class="context-card"><span class="card-kicker">Crown jewels</span><h3>Eight critical assets identified.</h3><p>MES, Manufacturing OT/ICS, ERP, PLM, Engineering Design Repository, CRM, Microsoft Entra ID and Customer & Business Data are governed according to business dependency and CIA requirements.</p></article>
+        <article class="context-card"><span class="card-kicker">Resilience</span><h3>Recovery requirements are business-aligned.</h3><p>Recovery tiers, RTO and RPO assumptions connect availability needs to business impact. In a real implementation, targets would be validated through formal Business Impact Analysis.</p></article>
       </div>
     </section>
 
-    <section class="section tinted" id="criticality">
+    <section class="section tinted" id="model">
       <div class="section-heading">
-        <div><span class="section-index">02 / Process criticality</span><h2>Prioritize what the business cannot afford to lose.</h2></div>
-        <p>Filter the eight assessed processes, then select a row to inspect ownership, dependency and impact. Criticality reflects business consequences of disruption.</p>
+        <div><span class="section-index">02 / Governance model</span><h2>Clear authority from executive oversight to technical execution.</h2></div>
+        <p>The framework separates business-risk ownership, security oversight, technical implementation and independent assurance.</p>
       </div>
-      <div class="toolbar" aria-label="Criticality filters">
-        <div class="filter-group" role="group" aria-label="Filter processes by criticality">
-          <button class="filter active" type="button" data-filter="All" aria-pressed="true">All <span>8</span></button>
-          <button class="filter" type="button" data-filter="Critical" aria-pressed="false">Critical <span>3</span></button>
-          <button class="filter" type="button" data-filter="High" aria-pressed="false">High <span>4</span></button>
-          <button class="filter" type="button" data-filter="Medium" aria-pressed="false">Medium <span>1</span></button>
-        </div>
-        <label class="search"><span class="sr-only">Search processes</span><input id="process-search" type="search" placeholder="Search process or owner…" autocomplete="off"></label>
-      </div>
-      <div class="criticality-layout">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Business process</th><th>Supporting system</th><th>Owner</th><th>Criticality</th></tr></thead>
-            <tbody id="process-table"></tbody>
-          </table>
-          <p class="empty-state" id="empty-state" hidden>No processes match this view.</p>
-        </div>
-        <aside class="detail-panel" id="process-detail" aria-live="polite"></aside>
+      <div class="context-grid">
+        <article class="context-card"><span class="card-kicker">Accountability</span><h3>Business Owner + Risk Owner</h3><p>Business Owners remain accountable for business outcomes. Risk Owners approve treatment or residual-risk acceptance within delegated authority and approved tolerance.</p></article>
+        <article class="context-card"><span class="card-kicker">Oversight</span><h3>Steering Committee + InfoSec</h3><p>Cybersecurity governance identifies and assesses risk, recommends controls, monitors remediation, reports performance and escalates material issues without assuming ownership of business risk.</p></article>
+        <article class="context-card"><span class="card-kicker">Assurance</span><h3>Three Lines Model</h3><p>Business and technology functions operate controls, cybersecurity/risk/compliance provide oversight and challenge, and Internal Audit remains independent from control ownership and remediation.</p></article>
       </div>
     </section>
 
-    <section class="section" id="impact">
+    <section class="section dark-section">
       <div class="section-heading">
-        <div><span class="section-index">03 / Impact model</span><h2>Six lenses turn disruption into business language.</h2></div>
-        <p>The framework evaluates financial, operational, customer, legal or regulatory, safety and reputational consequences with the relevant Business Owner.</p>
+        <div><span class="section-index">03 / Management governance</span><h2>Risk decisions stay visible and measurable.</h2></div>
+        <p>The framework extends beyond policy documentation into decision authority, escalation, metrics, assurance and continuous improvement.</p>
       </div>
-      <div class="impact-grid" id="impact-grid"></div>
-      <div class="legend" aria-label="Impact scale"><span>Impact scale</span><i class="low"></i>Low<i class="medium"></i>Medium<i class="high"></i>High</div>
-    </section>
-
-    <section class="section dark-section" id="crown-jewels">
-      <div class="section-heading">
-        <div><span class="section-index">04 / Crown jewels</span><h2>Protect assets according to the process they enable.</h2></div>
-        <p>Eight Crown Jewels are linked to business ownership and assessed for confidentiality, integrity, availability and recovery requirements.</p>
-      </div>
-      <div class="jewel-controls" role="group" aria-label="Filter crown jewels">
-        <button class="jewel-filter active" type="button" data-jewel-filter="All" aria-pressed="true">All assets</button>
-        <button class="jewel-filter" type="button" data-jewel-filter="Triple High" aria-pressed="false">High across CIA</button>
-        <button class="jewel-filter" type="button" data-jewel-filter="OT" aria-pressed="false">OT linked</button>
-        <button class="jewel-filter" type="button" data-jewel-filter="Enterprise-wide" aria-pressed="false">Enterprise-wide</button>
-      </div>
-      <div class="jewel-grid" id="jewel-grid"></div>
-    </section>
-
-    <section class="section">
-      <div class="section-heading">
-        <div><span class="section-index">05 / Governance outcome</span><h2>A repeatable line from strategy to accountable action.</h2></div>
-        <p>The final model links business criticality to Crown Jewels, CIA, recovery, ownership, risk treatment, policy and control governance, metrics, assurance and continuous improvement.</p>
-      </div>
-      <div class="outcome-flow" aria-label="Governance flow">
-        <article><span>01</span><strong>Business process</strong><small>Identify the activity that creates value.</small></article>
-        <article><span>02</span><strong>Impact and owner</strong><small>Establish consequence and accountability.</small></article>
-        <article><span>03</span><strong>Crown jewel</strong><small>Map the asset or information dependency.</small></article>
-        <article><span>04</span><strong>CIA + recovery</strong><small>Define protection and resilience needs.</small></article>
-        <article><span>05</span><strong>Governance action</strong><small>Drive treatment, metrics, escalation and assurance.</small></article>
-      </div>
-      <div class="validation-card">
-        <div><span class="card-kicker">Governance validation</span><h3>How the model stays credible</h3></div>
-        <ul>
-          <li><strong>Recovery targets:</strong> validate portfolio RTO/RPO assumptions through formal BIA with business and continuity stakeholders.</li>
-          <li><strong>Periodic review:</strong> reassess process criticality, Crown Jewels, CIA needs and recovery requirements as operations and dependencies change.</li>
-          <li><strong>Management oversight:</strong> use risk ownership, RACI, metrics, assurance and annual governance review to keep decisions traceable and accountable.</li>
-        </ul>
+      <div class="outcome-flow" aria-label="Governance lifecycle">
+        <article><span>01</span><strong>Identify</strong><small>Business context, assets and risks.</small></article>
+        <article><span>02</span><strong>Assess</strong><small>Impact, CIA, controls and residual risk.</small></article>
+        <article><span>03</span><strong>Decide</strong><small>Treatment, acceptance and escalation.</small></article>
+        <article><span>04</span><strong>Measure</strong><small>KPIs, KRIs, KGIs and RAG reporting.</small></article>
+        <article><span>05</span><strong>Assure</strong><small>Audit, compliance, maturity and review.</small></article>
       </div>
     </section>
 
-    <section class="section evidence" id="evidence">
+    <section class="section evidence" id="deliverables">
       <div class="section-heading">
-        <div><span class="section-index">06 / Project evidence</span><h2>Inspect the final deliverables.</h2></div>
-        <p>The published case study is backed by the final 87-page governance framework and a five-sheet workbook covering business criticality, Crown Jewels, CIA requirements, recovery requirements and governance accountability.</p>
+        <div><span class="section-index">04 / Final deliverables</span><h2>Publication-ready governance package.</h2></div>
+        <p>The completed project includes an 87-page governance framework and a five-sheet supporting workbook. The public portfolio page presents the case study; the verified publication files are retained as the project’s final artifact package.</p>
       </div>
       <div class="evidence-grid">
-        <a class="evidence-card" href="evidence/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.pdf" target="_blank" rel="noopener">
-          <span class="file-type">PDF · 87 pages</span><h3>Governance Framework</h3><p>Browser-ready final framework covering business criticality, Crown Jewels, CIA, resilience, roles and RACI, risk governance, metrics, assurance and maturity.</p><strong>Open PDF ↗</strong>
-        </a>
-        <a class="evidence-card" href="evidence/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx" download>
-          <span class="file-type">DOCX · Version 1.0 · Final</span><h3>Source Document</h3><p>Final editable source framework including governance roles, decision authority, policy and risk governance, reporting, assurance and continuous-improvement requirements.</p><strong>Download DOCX ↓</strong>
-        </a>
-        <a class="evidence-card" href="evidence/AIMG_Business_Process_Criticality.xlsx" download>
-          <span class="file-type">XLSX · 5 worksheets</span><h3>Assessment Workbook</h3><p>Business Process Criticality, Crown Jewels, CIA Assessment, Recovery Requirements and Governance RACI worksheets supporting the framework.</p><strong>Download workbook ↓</strong>
-        </a>
+        <article class="evidence-card"><span class="file-type">Framework · 87 pages</span><h3>Enterprise Governance Framework</h3><p>Business context, Crown Jewels, CIA, resilience, governance structure, roles and decision authority, policy/control governance, risk governance, metrics, assurance and maturity.</p><strong>Version 1.0 · Final</strong></article>
+        <article class="evidence-card"><span class="file-type">Workbook · 5 worksheets</span><h3>Governance Assessment Workbook</h3><p>Business Process Criticality, Crown Jewels, CIA Assessment, Recovery Requirements and Governance RACI.</p><strong>Final supporting evidence</strong></article>
+        <a class="evidence-card" href="https://github.com/krishnajith-stack/krishnajith-cybersecurity-portfolio/tree/main/enterprise-cybersecurity-governance-framework" target="_blank" rel="noopener"><span class="file-type">GitHub · Source</span><h3>Project Repository</h3><p>Version-controlled project page, README, design assets and implementation source used for the published case study.</p><strong>Open repository ↗</strong></a>
+      </div>
+      <div class="validation-card">
+        <div><span class="card-kicker">Governance validation</span><h3>Portfolio assumptions are clearly identified</h3></div>
+        <ul>
+          <li><strong>Recovery targets:</strong> portfolio RTO/RPO assumptions require formal BIA validation in a real organization.</li>
+          <li><strong>Approval:</strong> the portfolio artifact does not claim real organizational sign-off.</li>
+          <li><strong>Continuous review:</strong> process criticality, risks, controls, metrics and governance maturity should be reassessed as business conditions change.</li>
+        </ul>
       </div>
     </section>
   </main>
 
   <footer>
-    <div><strong>Enterprise Cybersecurity Governance Framework</strong><span>Atlas Industrial Machinery Group · Fictional professional portfolio case study · Version 1.0</span></div>
+    <div><strong>Enterprise Cybersecurity Governance Framework</strong><span>Atlas Industrial Machinery Group · Fictional professional portfolio case study · Version 1.0 Final</span></div>
     <a href="../">← Return to Krishnajith’s portfolio</a>
   </footer>
-  <script src="app.js"></script>
 </body>
 </html>
