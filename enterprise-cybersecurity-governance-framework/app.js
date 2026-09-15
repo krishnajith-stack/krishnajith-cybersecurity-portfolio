@@ -68,6 +68,15 @@ document.querySelectorAll(".jewel-filter").forEach(button => button.addEventList
   renderJewels(button.dataset.jewelFilter);
 }));
 
+// Accessibility/readability refinement for the governance decision section.
+const governanceStyle = document.createElement('style');
+governanceStyle.textContent = `
+  .decision-intro .section-kicker{font-size:.92rem!important;letter-spacing:.12em!important;font-weight:900!important;color:#477565!important;margin-bottom:12px!important;display:block!important}
+  .decision-intro h3{font-size:clamp(2rem,3.6vw,3.15rem)!important;line-height:1.06!important;letter-spacing:-.045em!important;margin:0!important;max-width:880px!important}
+  @media(max-width:650px){.decision-intro .section-kicker{font-size:.82rem!important}.decision-intro h3{font-size:2rem!important}}
+`;
+document.head.appendChild(governanceStyle);
+
 renderProcesses();
 renderDetail();
 renderImpact();
