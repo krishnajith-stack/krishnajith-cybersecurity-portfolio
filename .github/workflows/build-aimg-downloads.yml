@@ -1,0 +1,254 @@
+name: Build AIMG downloadable artifacts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-aimg-downloads.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-downloads:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install document libraries
+        run: pip install python-docx openpyxl reportlab
+
+      - name: Build PDF Word and Excel portfolio editions
+        shell: python
+        run: |
+          from pathlib import Path
+          from docx import Document
+          from docx.shared import Inches, Pt, RGBColor
+          from docx.enum.text import WD_ALIGN_PARAGRAPH
+          from docx.enum.section import WD_SECTION
+          from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+          from docx.oxml import OxmlElement
+          from docx.oxml.ns import qn
+          from openpyxl import Workbook
+          from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+          from openpyxl.formatting.rule import FormulaRule
+          from reportlab.lib import colors
+          from reportlab.lib.enums import TA_CENTER
+          from reportlab.lib.pagesizes import A4, landscape
+          from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+          from reportlab.lib.units import mm
+          from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether
+
+          out = Path('enterprise-cybersecurity-governance-framework/downloads')
+          out.mkdir(parents=True, exist_ok=True)
+
+          org_facts = [
+              ('Organization','Atlas Industrial Machinery Group (AIMG)'),
+              ('Industry','Heavy Equipment Manufacturing'),
+              ('Headquarters','USA'),
+              ('Operations','USA, UAE, India, Europe and Asia'),
+              ('Employees','25,000'),('Manufacturing Plants','12'),('IT Assets','15,000'),('OT Assets','5,000'),
+              ('Azure Subscriptions','20'),('Critical Applications','100'),('Third-Party Vendors','500'),('Data Centers','3'),
+              ('SOC','24x7'),('Environment','Hybrid IT + OT')]
+
+          processes = [
+              ['Manufacturing','MES / OT','VP Manufacturing / Plant Operations','Critical','Production disruption or shutdown, delayed customer orders, financial impact, and potential operational or safety consequences.'],
+              ['Finance','ERP','Chief Financial Officer (CFO)','Critical','Disruption to financial transactions, invoicing, payments and reporting, with financial and compliance impact.'],
+              ['Supply Chain','ERP','Chief Supply Chain Officer (CSCO)','Critical','Supplier, inventory, procurement and logistics disruption causing shortages, production delay and customer delivery impact.'],
+              ['Product Engineering','PLM','VP Engineering / R&D','High','Engineering and product-development disruption with intellectual-property, timeline and competitive impact.'],
+              ['Sales','CRM','Chief Sales Officer (CSO)','High','Customer management and sales disruption affecting quotations, service, revenue and customer satisfaction.'],
+              ['Email & Collaboration','Microsoft 365','CIO','High','Loss of enterprise communication and collaboration, reducing productivity and coordination.'],
+              ['IT Service Management','ServiceNow','CIO','High','Disruption to incident, request, change and problem management, slowing service restoration.'],
+              ['Human Resources','HR System','Chief Human Resources Officer (CHRO)','Medium','Payroll, recruitment and employee-service disruption while core production can generally continue.']]
+
+          jewels = [
+              ['MES','Application / OT','Manufacturing','VP Manufacturing / Plant Operations','Supports manufacturing operations and production execution.'],
+              ['Manufacturing OT / ICS Environment','OT Infrastructure','Manufacturing','VP Manufacturing / Plant Operations','Supports industrial control and production; compromise can create operational and safety consequences.'],
+              ['ERP','Application','Finance / Supply Chain','CFO / CSCO','Supports critical financial, procurement, inventory and supply-chain operations.'],
+              ['PLM','Application / Information','Product Engineering','VP Engineering / R&D','Supports product development and critical engineering information.'],
+              ['Engineering Design Repository','Information / Data','Product Engineering','VP Engineering / R&D','Contains engineering designs, technical documentation and intellectual property.'],
+              ['CRM','Application / Information','Sales','CSO','Supports customer management, sales operations, opportunities and customer information.'],
+              ['Microsoft Entra ID','Identity / Security Platform','Enterprise-wide','CIO','Controls enterprise identities and access to critical applications, cloud resources and corporate services.'],
+              ['Customer & Business Data','Information / Data','Enterprise-wide','Relevant Business Function Owner','Contains sensitive customer and business information requiring protection.']]
+
+          cia = [
+              ['MES','Application / OT','Manufacturing','VP Manufacturing / Plant Operations','High','High','High','Production execution and operational information require strong protection and availability.'],
+              ['Manufacturing OT / ICS Environment','OT Infrastructure','Manufacturing','VP Manufacturing / Plant Operations','Medium','High','High','Integrity and availability are essential to safe, continuous industrial operations.'],
+              ['ERP','Application','Finance / Supply Chain','CFO / CSCO','High','High','High','Financial, procurement, inventory and supply-chain records require confidentiality, accuracy and availability.'],
+              ['PLM','Application / Information','Product Engineering','VP Engineering / R&D','High','High','Medium','Sensitive engineering data requires confidentiality and integrity; short outages may delay engineering work.'],
+              ['Engineering Design Repository','Information / Data','Product Engineering','VP Engineering / R&D','High','High','Medium','Engineering intellectual property and designs require strong confidentiality and integrity.'],
+              ['CRM','Application / Information','Sales','CSO','High','High','Medium','Customer and sales information requires protection against disclosure and modification.'],
+              ['Microsoft Entra ID','Identity / Security Platform','Enterprise-wide','CIO','High','High','High','Enterprise identity and access depend on confidentiality, integrity and high availability.'],
+              ['Customer & Business Data','Information / Data','Enterprise-wide','Relevant Business Function Owner','High','High','Medium','Sensitive customer and business information creates privacy, contractual, financial and reputation exposure.']]
+
+          recovery = [
+              ['MES','Tier 1 - Mission Critical','2 Hours','15 Minutes','Directly supports manufacturing execution; prolonged outage can stop production.'],
+              ['Manufacturing OT / ICS Environment','Tier 1 - Mission Critical','2 Hours','15 Minutes','Industrial control outage can stop production and create operational or safety consequences.'],
+              ['ERP','Tier 1 - Mission Critical','2 Hours','15 Minutes','Critical finance, procurement, inventory and supply-chain dependency.'],
+              ['PLM','Tier 3 - Important','8 Hours','4 Hours','Outage delays engineering and product development but is less likely to immediately stop enterprise operations.'],
+              ['Engineering Design Repository','Tier 3 - Important','8 Hours','4 Hours','Outage delays engineering; data loss or corruption can affect accuracy and project timelines.'],
+              ['CRM','Tier 2 - Business Critical','4 Hours','1 Hour','Extended outage disrupts sales, customer engagement and revenue generation.'],
+              ['Microsoft Entra ID','Tier 1 - Mission Critical','2 Hours','15 Minutes','Identity outage can block access to critical applications and cloud resources enterprise-wide.'],
+              ['Customer & Business Data','Tier 2 - Business Critical','4 Hours','1 Hour','Data supports multiple functions and loss can create financial, contractual, privacy and reputation impact.']]
+
+          raci = [
+              ['1','Approve Cybersecurity Strategy','A','C','R','C','C','I','I','C','I'],
+              ['2','Approve Cybersecurity Policies','I','A','R','C','C','C','C','C','I'],
+              ['3','Cybersecurity Risk Assessment & Reporting','I','A','R','C','C','C','C','C','I'],
+              ['4','Approve Risk Treatment / Risk Acceptance','I','C','R','C','C','A','C','C','I'],
+              ['5','Implement Cybersecurity Controls & Remediation','I','A','C','I','C','C','R','I','I'],
+              ['6','Security Incident Management & Escalation','I','C','A','I','C','I','R','C','I'],
+              ['7','Vulnerability Management & Remediation Governance','I','C','A','I','C','C','R','I','I'],
+              ['8','Access Management & Privileged Access Governance','I','A','R','I','C','C','R','C','I'],
+              ['9','Third-Party Cybersecurity Risk Governance','I','C','R','C','A','C','C','C','I'],
+              ['10','KPI/KRI Monitoring & Executive Reporting','I','A','R','C','C','C','C','C','I'],
+              ['11','Coordinate Cybersecurity Audit Finding Remediation','I','C','A','C','C','C','R','C','C'],
+              ['12','Business Continuity / Cyber Resilience Governance','I','C','C','C','A','C','R','C','I'],
+              ['13','Policy Exception & Security Waiver Governance','I','C','R','C','C','A','C','C','I'],
+              ['14','Cybersecurity Architecture / Major Technology Change Review','I','A','R','C','C','C','R','C','I']]
+
+          sections = [
+              ('1. Organization Profile','AIMG is a fictional multinational heavy-equipment manufacturer operating across the USA, UAE, India, Europe and Asia. The governance design assumes a hybrid IT and OT environment with globally distributed business operations, manufacturing plants, Azure services, enterprise applications, identity platforms and third-party dependencies.'),
+              ('2. Business Context & Criticality','Cybersecurity priorities are anchored in business consequences rather than technical severity alone. Criticality considers financial, operational, customer, legal or regulatory, safety and reputation impact. Business Owners provide context and remain accountable for business outcomes.'),
+              ('3. Cybersecurity Governance Model','The model separates executive oversight, business-risk ownership, cybersecurity oversight, technical implementation and independent assurance. Risk decisions are made at the appropriate authority level and material risks, incidents, exceptions and unresolved issues are escalated based on business impact and risk severity.'),
+              ('4. Policy & Control Governance','AIMG uses a hierarchy of policies, standards, procedures and guidelines. Policies and controls have defined ownership, approval, review, exception and waiver processes. Control effectiveness is monitored and deficiencies are tracked to remediation or formal risk acceptance.'),
+              ('5. Cybersecurity Risk Governance','Risk governance covers identification, inherent risk, control effectiveness, residual risk, treatment, acceptance, risk-register governance, monitoring, reporting and escalation. Risk Owners approve treatment or residual-risk acceptance within delegated authority and tolerance.'),
+              ('6. Performance, Metrics & Management Reporting','KPIs, KRIs and KGIs provide measurable visibility of security performance and risk. Management reporting uses defined thresholds, RAG status, data-quality validation, escalation triggers and action ownership. Example metric: Critical Vulnerability SLA Compliance target >=95%, with management attention below 90%.'),
+              ('7. Assurance, Audit & Compliance','The assurance model maintains independence between control operation, oversight and audit. Findings are severity-rated, assigned to accountable owners, tracked through remediation and validated before closure. Legal, regulatory, contractual and certification obligations are incorporated into governance reporting.'),
+              ('8. Governance Maturity & Continuous Improvement','Governance maturity is assessed from Level 1 Initial through Level 5 Optimized across accountability, risk, policy, incident management, vulnerability management, IAM/PAM, OT, third-party risk, resilience, metrics, assurance and continuous improvement. The framework is reviewed at least annually and after material change.')]
+
+          # ---------- XLSX ----------
+          wb = Workbook()
+          ws = wb.active
+          ws.title = 'Business Process Criticality'
+          sheets = [
+              ('Business Process Criticality',['Business Process','Supporting System','Business Owner','Criticality','Business Impact'],processes),
+              ('Crown Jewels',['Crown Jewel Asset','Asset Type','Supporting Business Process','Business Owner','Why It Is Critical'],jewels),
+              ('CIA Assessment',['Crown Jewel Asset','Asset Type','Business Process','Business Owner','Confidentiality','Integrity','Availability','Business Justification'],cia),
+              ('Recovery Requirements',['Crown Jewel Asset','Recovery Tier','RTO','RPO','Recovery Rationale'],recovery),
+              ('Governance RACI',['#','Governance Activity','Executive Mgmt','CIO','InfoSec Manager','Steering Committee','Business Owner','Risk Owner','IT / OT / System Owner','Legal / Compliance','Internal Audit'],raci)]
+          navy='1F4E78'; white='FFFFFF'; thin=Side(style='thin',color='D9E2F3')
+          for idx,(name,headers,rows) in enumerate(sheets):
+              sh = ws if idx==0 else wb.create_sheet(name)
+              sh.append(headers)
+              for r in rows: sh.append(r)
+              for c in sh[1]:
+                  c.fill=PatternFill('solid',fgColor=navy); c.font=Font(color=white,bold=True); c.alignment=Alignment(horizontal='center',vertical='center',wrap_text=True); c.border=Border(left=thin,right=thin,top=thin,bottom=thin)
+              sh.freeze_panes='A2'; sh.auto_filter.ref=sh.dimensions; sh.row_dimensions[1].height=34
+              for row in sh.iter_rows(min_row=2):
+                  for c in row:
+                      c.alignment=Alignment(vertical='top',wrap_text=True); c.border=Border(left=thin,right=thin,top=thin,bottom=thin)
+              widths={
+                  'Business Process Criticality':[22,18,30,14,55],
+                  'Crown Jewels':[30,24,25,30,55],
+                  'CIA Assessment':[30,24,24,30,15,15,15,65],
+                  'Recovery Requirements':[30,27,12,12,65],
+                  'Governance RACI':[5,52,16,12,17,19,17,15,22,18,16]}[name]
+              for i,w in enumerate(widths,1): sh.column_dimensions[chr(64+i)].width=w
+              for r in range(2,sh.max_row+1): sh.row_dimensions[r].height=48 if name!='Governance RACI' else 38
+          # direct visual cues
+          colors_map={'High':'F4CCCC','Medium':'FFF2CC','Low':'D9EAD3','Critical':'F4CCCC','A':'F4CCCC','R':'CFE2F3','C':'FFF2CC','I':'E7E6E6'}
+          for sh_name, cols in [('Business Process Criticality',['D']),('CIA Assessment',['E','F','G']),('Governance RACI',[chr(i) for i in range(ord('C'),ord('K')+1)])]:
+              sh=wb[sh_name]
+              for col in cols:
+                  for cell in sh[col][1:]:
+                      v=str(cell.value or '')
+                      if v in colors_map:
+                          cell.fill=PatternFill('solid',fgColor=colors_map[v]); cell.font=Font(bold=v in ('High','Critical','A','R'))
+                      cell.alignment=Alignment(horizontal='center',vertical='center',wrap_text=True)
+          sh=wb['Recovery Requirements']
+          tier_colors={'Tier 1':'F4CCCC','Tier 2':'FCE5CD','Tier 3':'FFF2CC','Tier 4':'D9EAD3'}
+          for cell in sh['B'][1:]:
+              for key,col in tier_colors.items():
+                  if str(cell.value).startswith(key): cell.fill=PatternFill('solid',fgColor=col); cell.font=Font(bold=True)
+          wb.save(out/'AIMG_Cybersecurity_Governance_Workbook_v1.0.xlsx')
+
+          # ---------- DOCX ----------
+          doc=Document()
+          sec=doc.sections[0]
+          sec.top_margin=Inches(.7); sec.bottom_margin=Inches(.7); sec.left_margin=Inches(.75); sec.right_margin=Inches(.75)
+          styles=doc.styles
+          styles['Normal'].font.name='Aptos'; styles['Normal'].font.size=Pt(10.5)
+          for s in ['Title','Heading 1','Heading 2']:
+              styles[s].font.name='Aptos Display'
+          title=doc.add_paragraph(); title.alignment=WD_ALIGN_PARAGRAPH.CENTER
+          run=title.add_run('ENTERPRISE CYBERSECURITY\nGOVERNANCE FRAMEWORK'); run.bold=True; run.font.size=Pt(26); run.font.color.rgb=RGBColor(31,78,121)
+          p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER; p.add_run('Atlas Industrial Machinery Group (AIMG)\n').bold=True; p.add_run('Public Portfolio Edition · Version 1.0')
+          doc.add_paragraph('AIMG is a fictional organization created for professional portfolio and learning purposes. This public edition demonstrates the governance model and core working papers without claiming real organizational approval or deployment.')
+          doc.add_heading('Executive Summary',level=1)
+          doc.add_paragraph('The AIMG Enterprise Cybersecurity Governance Framework demonstrates a business-led approach to directing and overseeing cybersecurity across a multinational hybrid IT/OT environment. It connects business criticality, Crown Jewels, CIA requirements, resilience, accountability, risk decisions, policy and control governance, management metrics, assurance and governance maturity.')
+          doc.add_paragraph('The central governance principle is that cybersecurity provides expertise, assessment, monitoring and recommendations while the appropriate Business Owner or Risk Owner remains accountable for business-risk decisions within delegated authority.')
+          doc.add_heading('Organization Facts',level=1)
+          t=doc.add_table(rows=1,cols=2); t.alignment=WD_TABLE_ALIGNMENT.CENTER; t.style='Table Grid'
+          for i,h in enumerate(['Category','Assumption']): t.rows[0].cells[i].text=h
+          for a,b in org_facts:
+              cells=t.add_row().cells; cells[0].text=a; cells[1].text=b
+          doc.add_heading('Critical Business Processes',level=1)
+          def add_doc_table(headers, rows, widths=None):
+              table=doc.add_table(rows=1,cols=len(headers)); table.style='Table Grid'; table.alignment=WD_TABLE_ALIGNMENT.CENTER
+              for i,h in enumerate(headers): table.rows[0].cells[i].text=h
+              for row in rows:
+                  cells=table.add_row().cells
+                  for i,v in enumerate(row): cells[i].text=str(v)
+              return table
+          add_doc_table(['Process','System','Business Owner','Criticality','Business Impact'],processes)
+          doc.add_heading('Crown Jewels',level=1); add_doc_table(['Asset','Asset Type','Business Process','Business Owner','Why Critical'],jewels)
+          doc.add_heading('CIA Assessment',level=1); add_doc_table(['Asset','Type','Process','Owner','C','I','A','Business Justification'],cia)
+          doc.add_heading('Recovery Requirements',level=1); add_doc_table(['Asset','Recovery Tier','RTO','RPO','Recovery Rationale'],recovery)
+          doc.add_paragraph('Recovery targets are portfolio assumptions and should be validated through formal Business Impact Analysis with relevant Business Owners, system owners, IT, OT and business-continuity stakeholders.')
+          for heading,body in sections:
+              doc.add_heading(heading,level=1); doc.add_paragraph(body)
+          doc.add_heading('Governance RACI',level=1)
+          add_doc_table(['#','Governance Activity','Exec','CIO','InfoSec','Steering','Business','Risk','IT/OT/System','Legal/Comp','Audit'],raci)
+          doc.add_heading('Governance Decision Lifecycle',level=1)
+          for num,step,desc in [('01','Identify','Business context, assets and risks.'),('02','Assess','Impact, CIA, controls and residual risk.'),('03','Decide','Treatment, acceptance and escalation.'),('04','Measure','KPIs, KRIs, KGIs and RAG reporting.'),('05','Assure','Audit, compliance, maturity and review.')]:
+              p=doc.add_paragraph(style='Heading 2'); p.add_run(f'{num}  {step}')
+              doc.add_paragraph(desc)
+          doc.add_heading('Management Takeaway',level=1)
+          doc.add_paragraph('Risk decisions stay visible and measurable when accountability, decision authority, escalation triggers, metrics, assurance and periodic review are designed as one governance system. This framework demonstrates that end-to-end model for portfolio purposes.')
+          footer=doc.sections[0].footer.paragraphs[0]; footer.alignment=WD_ALIGN_PARAGRAPH.CENTER; footer.text='AIMG | Enterprise Cybersecurity Governance Framework | Public Portfolio Edition | v1.0'
+          doc.save(out/'AIMG_Enterprise_Cybersecurity_Governance_Framework_Portfolio_Edition_v1.0.docx')
+
+          # ---------- PDF ----------
+          pdf_path=out/'AIMG_Enterprise_Cybersecurity_Governance_Framework_Portfolio_Edition_v1.0.pdf'
+          styles=getSampleStyleSheet()
+          styles.add(ParagraphStyle(name='AIMGTitle',parent=styles['Title'],fontSize=24,leading=27,textColor=colors.HexColor('#1F4E78'),alignment=TA_CENTER,spaceAfter=12))
+          styles.add(ParagraphStyle(name='AIMGSection',parent=styles['Heading1'],fontSize=17,leading=21,textColor=colors.HexColor('#1F4E78'),spaceBefore=12,spaceAfter=8))
+          styles.add(ParagraphStyle(name='AIMGBody',parent=styles['BodyText'],fontSize=9.3,leading=13,spaceAfter=7))
+          story=[Paragraph('ENTERPRISE CYBERSECURITY GOVERNANCE FRAMEWORK',styles['AIMGTitle']),Paragraph('<b>Atlas Industrial Machinery Group (AIMG)</b><br/>Public Portfolio Edition · Version 1.0',styles['Heading2']),Spacer(1,8*mm),Paragraph('AIMG is a fictional organization created for professional portfolio and learning purposes. This public edition demonstrates the governance model and core working papers without claiming real organizational approval or deployment.',styles['AIMGBody']),Spacer(1,4*mm),Paragraph('Executive Summary',styles['AIMGSection']),Paragraph('The AIMG Enterprise Cybersecurity Governance Framework demonstrates a business-led approach to directing and overseeing cybersecurity across a multinational hybrid IT/OT environment. It connects business criticality, Crown Jewels, CIA requirements, resilience, accountability, risk decisions, policy and control governance, management metrics, assurance and governance maturity.',styles['AIMGBody'])]
+          def pdf_table(headers, rows, widths=None, font=6.6):
+              data=[[Paragraph('<b>'+str(x)+'</b>',styles['AIMGBody']) for x in headers]]
+              for r in rows: data.append([Paragraph(str(x),styles['AIMGBody']) for x in r])
+              table=Table(data,colWidths=widths,repeatRows=1,hAlign='CENTER')
+              table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#1F4E78')),('TEXTCOLOR',(0,0),(-1,0),colors.white),('VALIGN',(0,0),(-1,-1),'TOP'),('GRID',(0,0),(-1,-1),0.35,colors.HexColor('#CBD5E1')),('LEFTPADDING',(0,0),(-1,-1),4),('RIGHTPADDING',(0,0),(-1,-1),4),('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4)]))
+              return table
+          story += [Paragraph('Organization Facts',styles['AIMGSection']),pdf_table(['Category','Assumption'],org_facts,[55*mm,120*mm]),PageBreak(),Paragraph('Critical Business Processes',styles['AIMGSection']),pdf_table(['Process','System','Business Owner','Criticality','Business Impact'],processes,[28*mm,24*mm,42*mm,18*mm,73*mm]),PageBreak(),Paragraph('Crown Jewels',styles['AIMGSection']),pdf_table(['Asset','Asset Type','Business Process','Business Owner','Why Critical'],jewels,[34*mm,30*mm,31*mm,42*mm,48*mm]),PageBreak(),Paragraph('CIA Assessment',styles['AIMGSection']),pdf_table(['Asset','Type','Process','Owner','C','I','A','Justification'],cia,[31*mm,25*mm,25*mm,34*mm,10*mm,10*mm,10*mm,46*mm]),PageBreak(),Paragraph('Recovery Requirements',styles['AIMGSection']),pdf_table(['Asset','Recovery Tier','RTO','RPO','Recovery Rationale'],recovery,[40*mm,38*mm,18*mm,18*mm,75*mm]),Paragraph('Recovery targets are portfolio assumptions and should be validated through formal Business Impact Analysis with relevant Business Owners, system owners, IT, OT and business-continuity stakeholders.',styles['AIMGBody'])]
+          for heading,body in sections:
+              story += [Paragraph(heading,styles['AIMGSection']),Paragraph(body,styles['AIMGBody'])]
+          story += [PageBreak(),Paragraph('Governance RACI',styles['AIMGSection']),pdf_table(['#','Governance Activity','Exec','CIO','InfoSec','Steer','Business','Risk','IT/OT','Legal','Audit'],raci,[8*mm,58*mm,13*mm,11*mm,14*mm,14*mm,14*mm,13*mm,15*mm,14*mm,13*mm]),Spacer(1,6*mm),Paragraph('Governance Decision Lifecycle',styles['AIMGSection'])]
+          for num,step,desc in [('01','Identify','Business context, assets and risks.'),('02','Assess','Impact, CIA, controls and residual risk.'),('03','Decide','Treatment, acceptance and escalation.'),('04','Measure','KPIs, KRIs, KGIs and RAG reporting.'),('05','Assure','Audit, compliance, maturity and review.')]:
+              story += [Paragraph(f'<b>{num} {step}</b> — {desc}',styles['AIMGBody'])]
+          story += [Paragraph('Management Takeaway',styles['AIMGSection']),Paragraph('Risk decisions stay visible and measurable when accountability, decision authority, escalation triggers, metrics, assurance and periodic review operate as one governance system.',styles['AIMGBody'])]
+          def footer(canvas,doc):
+              canvas.saveState(); canvas.setFont('Helvetica',7); canvas.setFillColor(colors.HexColor('#65746d')); canvas.drawString(18*mm,10*mm,'AIMG | Enterprise Cybersecurity Governance Framework | Public Portfolio Edition | v1.0'); canvas.drawRightString(195*mm,10*mm,f'Page {doc.page}'); canvas.restoreState()
+          pdf=SimpleDocTemplate(str(pdf_path),pagesize=A4,rightMargin=14*mm,leftMargin=14*mm,topMargin=15*mm,bottomMargin=17*mm,title='AIMG Enterprise Cybersecurity Governance Framework')
+          pdf.build(story,onFirstPage=footer,onLaterPages=footer)
+
+      - name: Commit generated downloads
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add enterprise-cybersecurity-governance-framework/downloads
+          if git diff --cached --quiet; then
+            echo "No download changes"
+            exit 0
+          fi
+          git commit -m "Generate AIMG PDF Word and Excel downloads"
+          git push
