@@ -1,0 +1,58 @@
+name: Publish verified full AIMG framework
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-final-aimg-framework.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reconstruct exact uploaded Word framework
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p enterprise-cybersecurity-governance-framework/downloads
+          mapfile -t parts < <(find .github/final-aimg-source -maxdepth 1 -type f -name 'docx-*.b64' | sort -V)
+          echo "Found ${#parts[@]} staged Word chunks"
+          test ${#parts[@]} -gt 0
+          cat "${parts[@]}" | tr -d '\r\n' | base64 -d > enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx
+          echo 'c6b7ede35dc1a9f36a17cbbe08b74274f3c14c546e9836aaafd9109b722325fc  enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx' | sha256sum -c -
+
+      - name: Install PDF conversion tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice-writer poppler-utils
+
+      - name: Convert full framework to PDF and verify page count
+        shell: bash
+        run: |
+          set -euo pipefail
+          out='enterprise-cybersecurity-governance-framework/downloads'
+          libreoffice --headless --convert-to pdf --outdir "$out" "$out/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx"
+          pages=$(pdfinfo "$out/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.pdf" | awk '/^Pages:/ {print $2}')
+          echo "Generated PDF pages: $pages"
+          test "$pages" = '87'
+
+      - name: Publish verified full framework
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.docx
+          git add enterprise-cybersecurity-governance-framework/downloads/AIMG_Enterprise_Cybersecurity_Governance_Framework_v1.0.pdf
+          if git diff --cached --quiet; then
+            echo 'Verified artifacts already published.'
+          else
+            git commit -m 'Publish full 87-page AIMG governance framework'
+            git push
+          fi
